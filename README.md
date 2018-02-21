@@ -25,9 +25,9 @@ Daha fazla örnek için: [Örnekler](https://github.com/ErenKrt/yabanci-dizi-bot
 Detaylı Örnekler: ornekler/index.html
 ```php
 require_once("class.php");
-$bot= new epbot(5); // Son eklenenlerden almak istediğiniz miktar
+$bot= new epbot();
 
-$deneme= $bot->sonlar();
+$deneme= $bot->sonlar(5); // Son eklenenlerden almak istediğiniz miktar
 
 for($i=0; $i<count($deneme); $i++){
   echo "<a href='izle.php?isim=".$bot->seourl($deneme[$i][adi]." ".$deneme[$i][epadi])."' target='_blank'>".$deneme[$i][adi]."-".$deneme[$i][epadi]." | ".$deneme[$i][tarih]."<br><img src='resim.php?url=".$deneme[$i][resim]."' height='200' width='200'></a><hr>";
