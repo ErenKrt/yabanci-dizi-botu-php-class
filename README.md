@@ -19,7 +19,7 @@ Php üzerinde basit kurulum:
 Class 5.3, 5.4, 5.5, 5.6 sürümlerinde çalışmaktadır.
 
 ### Ornekler
-Canlı Demo: [Demo](http://bit.ly/2F3LPXv)
+Canlı Demo: [Demo](http://bit.ly/2F3LPXv).
 Daha fazla örnek için: [Örnekler](https://github.com/ErenKrt/yabanci-dizi-botu-php-class/tree/master/ornekler).
 Detaylı Örnekler: ornekler/index.html
 ```php
