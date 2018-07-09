@@ -12,6 +12,7 @@
  * @author Eren Kurt (ErenKrt)
  * @mail kurteren07@gmail.com
  * @date 21.02.2018
+ * @update 10.07.2018
  */
 
 class epbot{
@@ -21,11 +22,12 @@ class epbot{
         $options = array ( CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => false,
             CURLOPT_ENCODING => "",
-            CURLOPT_REFERER => "http://dizipub.com/",
+            CURLOPT_REFERER => "http://dizipub.co/",
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_SSL_VERIFYPEER => false,
+	    CURLOPT_FOLLOWLOCATION=>true
         );
         $ch = curl_init( $url );
         curl_setopt_array( $ch, $options );
@@ -81,7 +83,7 @@ class epbot{
     }
 
     function sonlar($uzunluk=10){
-      $bot= $this->curl("http://dizipub.com");
+      $bot= $this->curl("http://dizipub.co/");
       preg_match_all( '/<article class="poster-article ">(.*?)<\/article>/', $bot, $normalcikti );
       preg_match_all( '/<article class="poster-article mr0">(.*?)<\/article>/', $bot, $mrcikti );
       preg_match_all( '/<article class="poster-article  new-tv-series">(.*?)<\/article>/', $bot, $new );
@@ -104,7 +106,7 @@ class epbot{
     function dizicek($isim){
       $isim= $this->seourl($isim);
 
-      $bot= $this->curl("http://dizipub.com/dizi/".$isim."/");
+      $bot= $this->curl("http://dizipub.co/dizi/".$isim."/");
 
       preg_match('/<article id="post-summary">(.*?)<\/article>/',$bot,$bilgi);
       $bilgi= $bilgi[1];
@@ -155,8 +157,7 @@ class epbot{
     }
 
     function izle($isim){
-        $isim= $this->seourl($isim);
-        $url= "http://dizipub.com/".$isim."/";
+        $url= "http://dizipub.co/".$isim."/";
 
         $bot= $this->curl($url);
         preg_match('/<div class="player-alternatives"><div class="button-hole">(.*?)<\/div><\/div>/',$bot,$alternatifler);
