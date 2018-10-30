@@ -22,7 +22,7 @@ Class'ın işleyisini ve mantığını daha iyi anlamak için indirip hazırlam�
 
 ### Ornek Site
 #### Anasayfa
-![Örnek](https://i.hizliresim.com/nlzjoR.png)
+![Örnek](resimler/anasayfa.png)
 ![Örnek](https://i.hizliresim.com/Q2DvGr.png)
 #### İzle
 ![Örnek](https://i.hizliresim.com/vPkXlD.png)
