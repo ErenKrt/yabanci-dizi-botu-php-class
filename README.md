@@ -23,11 +23,11 @@ Class'ın işleyisini ve mantığını daha iyi anlamak için indirip hazırlam�
 ### Ornek Site
 #### Anasayfa
 ![Örnek](resimler/anasayfa.png)
-![Örnek](https://i.hizliresim.com/Q2DvGr.png)
+![Örnek](resimler/anasayfa (2).png)
 #### İzle
-![Örnek](https://i.hizliresim.com/vPkXlD.png)
+![Örnek](resimler/izle.png)
 #### Dizi Sayfası
-![Örnek](https://i.hizliresim.com/yqYNDM.png)
+![Örnek](resimler/dizi sayfası.png)
 
 ### Ornekler
 
