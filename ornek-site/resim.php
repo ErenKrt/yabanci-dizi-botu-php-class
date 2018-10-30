@@ -12,28 +12,9 @@
  * @İnstagram ep.eren
  * @date 30.10.2018
  */
-
-error_reporting(0);
-require("class.php");
-
-use eperen\yabancidizi;
-$dizi = new yabancidizi();
-
-//$populerdiziler= $dizi->populer();
-//print_r($populerdiziler);
-
-//$yenieklenenler= $dizi->yeni(35,1);
-//print_r($yenieklenenler);
-
-//$diziliste= $dizi->diziliste("tüm",1);
-//print_r($diziliste);
-
-//$dizisayfasi= $dizi->dizisayfa("elite");
-//print_R($dizisayfasi);
-
-//$izle= $dizi->izle("/izle/the-flash-5-sezon-1-bolum","vidmolytr");
-//print_r($izle);
-
-//$arama= $dizi->arama("mr robot");
-//print_R($arama);
-?>
+ 
+if(isset($_GET["url"])){
+  if($_GET["url"]!=""){
+    readfile(base64_decode($_GET["url"]));
+  }
+}

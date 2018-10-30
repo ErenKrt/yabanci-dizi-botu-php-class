@@ -1,185 +1,25 @@
 <?php
-
-//    ________                          ___  ____           _
-//   |_   __  |                        |_  ||_  _|         / |_
+//    ________                          ___  ____         _
+//   |_   __  |                        |_  ||_  _|       / |_
 //   | |_ \_| _ .--.  .---.  _ .--.    | |_/ /    _ .--.`| |-'
 //   |  _| _ [ `/'`\]/ /__\\[ `.-. |   |  __'.   [ `/'`\]| |
 //  _| |__/ | | |    | \__., | | | |  _| |  \ \_  | |    | |,
 // |________|[___]    '.__.'[___||__]|____||____|[___]   \__/
-
 /**
  * Class Yabancı Dizi Bot PHP / Class
  * @author Eren Kurt (ErenKrt)
  * @mail kurteren07@gmail.com
- * @date 21.02.2018
- * @update 10.07.2018
+ * @İnstagram ep.eren
+ * @date 30.10.2018
  */
+ 
+namespace eperen;
 
-class epbot{
+class yabancidizi{
 
-  private function Curl( $url, $proxy = NULL )
-    {
-        $options = array ( CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_ENCODING => "",
-            CURLOPT_REFERER => "http://dizipub.co/",
-            CURLOPT_CONNECTTIMEOUT => 30,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_SSL_VERIFYPEER => false,
-	    CURLOPT_FOLLOWLOCATION=>true
-        );
-        $ch = curl_init( $url );
-        curl_setopt_array( $ch, $options );
-        $content = curl_exec( $ch );
-        $err = curl_errno( $ch );
-        $errmsg = curl_error( $ch );
-        $header = curl_getinfo( $ch );
-        curl_close( $ch );
-        $header[ 'errno' ] = $err;
-        $header[ 'errmsg' ] = $errmsg;
-        $header[ 'content' ] = $content;
-        return str_replace( array ( "\n", "\r", "\t" ), NULL, $header[ 'content' ] );
-    }
+  public $baseurl="https://www.dizist1.net/";
 
-    function anaduzenle($dizi){
-
-      preg_match("/<span class='post-date'>(.*?)<\/span>/", $dizi, $tarih);
-      $tarih=$tarih[1];
-      preg_match('/<a href="(.*?)">(.*?)<\/a>/',$dizi,$url);
-      $url= $url[1];
-      preg_match('/<h3 class="archive-name">(.*?)<\/h3>/',$dizi,$adi);
-      $adi= $adi[1];
-      preg_match('/<h4 class="episode-name">(.*?)<\/h4>/',$dizi,$epadi);
-      $epadi= $epadi[1];
-      preg_match('/<img src="(.*?)" alt="(.*?)" title="(.*?)" class="(.*?)" \/>/',$dizi,$resim);
-      $resim=base64_encode($resim[1]);
-
-      if($tarih==""){
-        $tarih="X";
-      }
-      if($url==""){
-        $url="#";
-      }
-      if($adi==""){
-        $adi="Dizi adı";
-      }
-      if($epadi==""){
-        $epadi="Bölüm x";
-      }
-      if($resim==""){
-        $resim= base64_encode("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png");
-      }
-
-      $ary= array(
-        "adi"=>$this->clear($adi),
-        "epadi"=>$this->clear($epadi),
-        "tarih"=>$this->clear($tarih),
-        "url"=>$this->clear($url),
-        "resim"=>$this->clear($resim)
-      );
-
-      return $ary;
-    }
-
-    function sonlar($uzunluk=10){
-      $bot= $this->curl("http://dizipub.co/");
-      preg_match_all( '/<article class="poster-article ">(.*?)<\/article>/', $bot, $normalcikti );
-      preg_match_all( '/<article class="poster-article mr0">(.*?)<\/article>/', $bot, $mrcikti );
-      preg_match_all( '/<article class="poster-article  new-tv-series">(.*?)<\/article>/', $bot, $new );
-
-      $diziler= array_merge($normalcikti[1],$mrcikti[1],$new[1]);
-
-      if($uzunluk > count($diziler)){
-        $uzunluk= count($diziler);
-      }
-
-      $diziarray= array();
-      for($i=0; $i <$uzunluk; $i++){
-      $veri= $this->anaduzenle($diziler[$i]);
-      array_push($diziarray,$veri);
-      }
-
-      return $diziarray;
-    }
-
-    function dizicek($isim){
-      $isim= $this->seourl($isim);
-
-      $bot= $this->curl("http://dizipub.co/dizi/".$isim."/");
-
-      preg_match('/<article id="post-summary">(.*?)<\/article>/',$bot,$bilgi);
-      $bilgi= $bilgi[1];
-
-      preg_match('/<h1>(.*?)<\/h1>/',$bot,$isim);
-      $isim= $isim[1];
-      preg_match('/<p>(.*?)<\/p>/',$bot,$aciklama);
-      $aciklama= $aciklama[1];
-
-      preg_match('/<aside id="archive-sidebar" class="sidebar">(.*?)<\/aside>/',$bot,$sidebar);
-      $sidebar= $sidebar[1];
-
-      preg_match('/<img src="(.*?)" alt="(.*?)" class="(.*?)">/',$sidebar,$resim);
-      $resim= $resim[1];
-
-      preg_match('/<span class="imdb-score"> <mark>IMDb Puanı:<\/mark> (.*?) <small>\/10<\/small> <\/span>/',$sidebar,$imdb);
-      $imdb= $imdb[1];
-
-      preg_match('/<ul class="seasons-tab-list tabsSelector">(.*?)<\/ul>/',$bot,$sezonlar);
-      $sezonlar=$sezonlar["1"];
-
-      preg_match_all('/<li><a href="(.*?)" class="btn-radius button(.*?)"> (.*?) <\/a><\/li>/',$sezonlar,$sezonlar);
-      $sezonlar= $sezonlar[3];
-
-      $sezonbler= array();
-
-
-      for($i=1; $i<=count($sezonlar); $i++){
-      preg_match_all('/<div id="'.$i.'" class="list-table"><article class="article-list">(.*?)<\/article><\/div>/',$bot,$sezonbölümleri);
-      $sezonbölümleri= $sezonbölümleri[1][0];
-      preg_match_all('/<a href="(.*?)">(.*?)<\/a>/',$sezonbölümleri,$sezonbölümleri);
-      $sezonbölümleri= $sezonbölümleri[2];
-      array_push($sezonbler,$sezonbölümleri);
-      }
-
-      $ary= array("isim"=>$isim,"aciklama"=>$aciklama,"resim"=>base64_encode($resim),"sezonlar"=>$sezonlar,"bölümler"=>$sezonbler);
-      return $ary;
-    }
-    function playerbul($link){
-      $bot= $this->curl($link);
-      preg_match('/<div id="video-player-container"><span class="object-wrapper">(.*?)<\/span><\/div>/',$bot,$player);
-      $player= $player["1"];
-      preg_match('/<iframe(.*?)><\/iframe>/',$player,$player);
-      $player= $player["1"];
-      preg_match('/src="(.*?)"/',$player,$player);
-      $player= $player["1"];
-      return base64_encode($player);
-    }
-
-    function izle($isim){
-        $url= "http://dizipub.co/".$isim."/";
-
-        $bot= $this->curl($url);
-        preg_match('/<div class="player-alternatives"><div class="button-hole">(.*?)<\/div><\/div>/',$bot,$alternatifler);
-        $alternatifler=$alternatifler[1];
-        preg_match_all('/<a href="(.*?)">(.*?)<\/a>/',$alternatifler,$playerlar);
-
-        $alternatif= array(
-          $playerlar[2][0]=>$this->playerbul($playerlar[1][0]),
-          $playerlar[2][1]=>$this->playerbul($playerlar[1][1])
-        );
-        $default= $this->playerbul($url);
-        $defaultary= array("default"=>$default);
-        $alternatif=array_merge($defaultary,$alternatif);
-        return $alternatif;
-    }
-    function clear($yazi){
-	   $yazi = preg_replace("/\s+/", " ", $yazi);
-	   $yazi = trim($yazi);
-	   return $yazi;
-   }
-
-  function seourl($str, $options = array()){
+  function seflink($str, $options = array()){
     $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
     $defaults = array(
         'delimiter' => '-',
@@ -256,6 +96,315 @@ class epbot{
     $str = mb_substr($str, 0, ($options['limit'] ? $options['limit'] : mb_strlen($str, 'UTF-8')), 'UTF-8');
     $str = trim($str, $options['delimiter']);
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
-}
+  }
+
+  function sifreleme($icerik,$islem=0){
+    if($islem==0){
+      return base64_encode($icerik);
+    }elseif($islem==1){
+      return base64_decode($icerik);
+    }
+  }
+
+  private function Curl( $url="", $proxy = NULL ){
+      if($url==""){
+        $url=$this->baseurl;
+      }else{
+        $url = $this->baseurl.$url;
+      }
+        $options = array (
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_ENCODING => "",
+            CURLOPT_REFERER => $this->baseurl,
+            CURLOPT_CONNECTTIMEOUT => 30,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+	          CURLOPT_FOLLOWLOCATION=>true
+        );
+        $ch = curl_init( $url );
+        curl_setopt_array( $ch, $options );
+        $content = curl_exec( $ch );
+        $err = curl_errno( $ch );
+        $errmsg = curl_error( $ch );
+        $header = curl_getinfo( $ch );
+        curl_close( $ch );
+        $header[ 'errno' ] = $err;
+        $header[ 'errmsg' ] = $errmsg;
+        $header[ 'content' ] = $content;
+        return str_replace( array ( "\n", "\r", "\t" ), NULL, trim($header[ 'content' ]) );
+    }
+
+    function anadizigrid($dizi){
+      preg_match( '/<img src="(.*?)" class="tv-poster-img">/', $dizi, $resim );
+      $resim= $resim[1];
+      preg_match( '/<span class="poster-alt-title text-overflow">(.*?)<\/span>/', $dizi, $tur );
+      $tur= $tur[1];
+      preg_match( '/<span class="rating-circle">(.*?)<\/span>/', $dizi, $imdb );
+      $imdb= $imdb[1];
+      preg_match( '/<a href="(.*?)" class="poster-title text-overflow">(.*?)<\/a>/', $dizi, $url );
+      $isim= $url[2];
+      $url= $url[1];
+      $bol= explode('">',$url);
+      $url= $bol[0];
+
+      $bol= explode("/dizi/",$url);
+      $url= $bol[1];
+
+      return array("isim"=>$isim,"resim"=>$resim,"tur"=>$tur,"puan"=>$imdb,"urlname"=>$url);
+    }
+
+    function anabolumgrid($bolum){
+
+      preg_match( '/<img src="(.*?)" class="tv-poster-img">/', $bolum, $resim );
+      $resim= $resim[1];
+
+      preg_match( '/<div class="article-release"><span>(.*?)<\/span><\/div>/', $bolum, $ytarih );
+      $ytarih= $ytarih[1];
+
+      preg_match( '/<div class="h-series-lang (.*?)"><\/div>/', $bolum, $dil );
+      $dil= $dil[1];
+
+      preg_match( '/<span class="poster-title (.*?)">(.*?)<\/span>/', $bolum, $isim );
+      $isim= $isim[2];
+
+      preg_match( '/<span class="poster-alt-title (.*?)">(.*?)<\/span>/', $bolum, $ybolum );
+      $ybolum= $ybolum[2];
+
+      preg_match( '/<a href="(.*?)">(.*?)<\/a>/', $bolum, $url );
+      $url= $url[1];
+
+      return array("isim"=>$isim,"bolum"=>$ybolum,"resim"=>$resim,"tarih"=>$ytarih,"dil"=>$dil,"url"=>$url);
+    }
+
+    function dizilistegrid($dizi){
+
+
+      preg_match( '/<img src="(.*?)">/', $dizi, $resim );
+      $resim= $resim[1];
+
+      preg_match( '/<h3 class="tv-series-title ff-2 pull-left">(.*?)<\/h3>/', $dizi, $isim );
+      preg_match( '/<a href="(.*?)">(.*?)<\/a>/', $isim[1], $isim );
+
+      $url= $isim[1];
+      $bol= explode("/dizi/",$url);
+      $url= $bol[1];
+
+      $isim= $isim[2];
+
+      preg_match( '/<span class="tv-series-list-imdb pull-right">(.*?)<\/span>/', $dizi, $puan );
+      preg_match( '/<span class="btn btn-xs btn-orange">IMDb: <b>(.*?)<\/b><\/span>/', $dizi, $puan );
+      $puan= $puan[1];
+
+      preg_match_all( '/<span class="primary-color (.*?)">(.*?)<\/span>/', $dizi, $bilgiler );
+      $yapimyili= $bilgiler[0][0];
+      $tur= $bilgiler[0][1];
+
+      preg_match( '/<p class="tv-series-list-desc (.*?)">(.*?)<\/p>/', $dizi, $aciklama );
+      $aciklama= $aciklama[2];
+
+      return array("isim"=>$isim,"resim"=>$resim,"aciklama"=>$aciklama,"puan"=>$puan,"yapimyili"=>$yapimyili,"tur"=>$tur,"url"=>$url);
+    }
+
+    function populer(){
+      $bot= $this->curl();
+      preg_match( '/<section id="featured-posts" class="(.*?)">(.*?)<\/section>/', $bot, $dizirow );
+      preg_match_all( '/<article class="grid-five">(.*?)<\/article>/', $dizirow[0], $diziler );
+      $diziary=array();
+      for ($i=0; $i < count($diziler[0]); $i++) {
+        $dizi= $this->anadizigrid($diziler[0][$i]);
+        array_push($diziary,$dizi);
+      }
+      return $diziary;
+    }
+
+    function yeni($limit,$sayfa){
+
+        $bot= $this->curl("yeni-eklenen-bolumler/".$sayfa);
+        preg_match( '/<section class="tv-series-list (.*?)">(.*?)<\/section>/', $bot, $yenirow );
+        preg_match_all( '/<article class="(.*?) grid-five">(.*?)<\/article>/', $yenirow[2], $diziler );
+        $veriler= array();
+
+        $diziary= array();
+        for ($i=0; $i < $limit ; $i++) {
+          $dizi= $this->anabolumgrid($diziler[0][$i]);
+          array_push($diziary,$dizi);
+        }
+        array_push($veriler,$diziary);
+        preg_match( '/<ul class="cd-pagination">(.*?)<\/ul>/', $bot, $pagenation );
+        preg_match( "/<li class='current'><b>(.*?)<\/b><\/li>/", $pagenation[1], $sayfa );
+        $sayfa= str_replace(array('[',']'),"",$sayfa[1]);
+        $bol= explode('/',$sayfa);
+
+        array_push($veriler,array("bulunan"=>$bol[0],"max"=>$bol[1]));
+
+      return $veriler;
+
+    }
+
+
+    function diziliste($tur,$sayfa=1){
+      if($tur=="yabancı"){
+        $tid= 1;
+      }elseif($tur=="anime"){
+        $tid=2;
+      }elseif($tur=="asya"){
+        $tid=4;
+      }elseif($tur=="tüm"){
+        $tid=3;
+      }else{
+        $tid=3;
+      }
+
+      $bot= $this->curl("arsiv/?category=".$tid."&page=".$sayfa);
+
+      preg_match_all( '/<article class="tv-series-list-box">(.*?)<\/article>/', $bot, $diziler );
+      $veriler= array();
+      $diziary= array();
+      for ($i=0; $i <count($diziler[0]) ; $i++) {
+        $dizi= $this->dizilistegrid($diziler[0][$i]);
+        array_push($diziary,$dizi);
+      }
+      array_push($veriler,$diziary);
+
+        preg_match( '/<ul class="cd-pagination">(.*?)<\/ul>/', $bot, $pagenation );
+        if($pagenation[1]==null){
+          array_push($veriler,array("no pagination"));
+        }else{
+        preg_match( "/<li class='current'><b>(.*?)<\/b><\/li>/", $pagenation[1], $sayfa );
+        $sayfa= str_replace(array('[',']'),"",$sayfa[1]);
+        $bol= explode('/',$sayfa);
+        array_push($veriler,array("bulunan"=>$bol[0],"max"=>$bol[1]));
+        }
+
+
+
+      return $veriler;
+    }
+
+    function dizisayfa($dizi){
+     $bot= $this->curl("dizi/".$dizi);
+
+
+     preg_match( '/<section class="tv-series-profile-content tv-series-overview (.*?)">(.*?)<\/section>/', $bot, $dizisayfa );
+     $dizisayfa= $dizisayfa[2];
+
+     preg_match( '/<h1 class="tv-series-title (.*?)">(.*?)<\/h1>/', $bot, $isim );
+     $isim= $isim[2];
+
+     preg_match( '/<img src="(.*?)" alt="(.*?)">/', $dizisayfa, $resim );
+     $resim= $resim[1];
+
+     preg_match( '/<div class="tv-series-desc (.*?)">(.*?)<\/div>/', $bot, $aciklama );
+     preg_match( '/<p>(.*?)<\/p>/', $aciklama[2], $aciklama );
+     $aciklama= $aciklama[1];
+
+     preg_match( "/<p class='tv-series-profile-tag'>(.*?)<\/p>/", $bot, $taglar );
+     preg_match_all( '/<span class="btn btn-xs btn-(.*?)">(.*?)<\/span>/', $bot, $detaylar );
+
+     $yapimyili= $detaylar[2][0];
+     $tur= $detaylar[2][1];
+     $sure=$detaylar[2][2];
+     $yapimulke=$detaylar[2][3];
+     $yonetmen=$detaylar[2][4];
+
+     preg_match( '/<section class="tv-seasons-container (.*?)">(.*?)<\/section>/', $bot, $sezonrow );
+     $sezonrow= $sezonrow[2];
+     //echo $sezonrow;
+
+     preg_match_all( '/<div class="season-tab" data-season="(.*?)">(.*?)<\/div>/', $sezonrow, $sezonlar );
+     $sezonlar= $sezonlar[2];
+
+     $sezonlarary= array();
+
+     include 'htmlparser.php';
+     $bul= str_get_html($sezonrow);
+
+     for($i=1; $i<=count($sezonlar); $i++){
+
+      $sezon= $bul->find("div[class=tv-episode-tables sz$i]");
+
+      $sezonbolumlerary= array();
+      for($a=0; $a<=count($sezon[0]->children())-1; $a++){
+
+        $bolum= $sezon[0]->children($a)->find("a")[0]->innertext();
+        $bolumadi= $sezon[0]->children($a)->find("a")[1]->innertext();
+        $link= $sezon[0]->children($a)->find("a")[0]->href;
+        $bol= explode("/izle/",$link);
+        $link= $bol[1];
+        array_push($sezonbolumlerary,array("bolum"=>$bolum,"adi"=>$bolumadi,"url"=>$link));
+
+     }
+
+      array_push($sezonlarary,$sezonbolumlerary);
+
+     }
+     array_unshift($sezonlarary,"Sezonlar Listesi #Ep.Eren");
+
+     return array("adi"=>$isim,"resim"=>$resim,"aciklama"=>$aciklama,"detaylar"=>array("yapimyili"=>$yapimyili,"tur"=>$tur,"sure"=>$sure,"yapimulke"=>$yapimulke,"yonetmen"=>$yonetmen),"sezonlar"=>$sezonlarary);
+    }
+
+    function izle($uri=null,$player=null){
+      if($uri!=null){
+
+        if($player!=null){
+          $bot= $this->curl("izle/".$uri."?source=".$player);
+        }else{
+          $bot= $this->curl("izle/".$uri);
+        }
+
+        include 'htmlparser.php';
+        $bul= str_get_html($bot);
+        $bolumisim= $bul->find("h1[class=h4 m-b-0 fw-regular]")[0]->innertext;
+
+        $videorow= $bul->find("div[id=video-area]");
+        $videorow= $videorow[0];
+
+        $playerary= array();
+
+          for($i=0; $i<count($videorow->find("div[class=span-nine]")[0]->find("a")); $i++){
+            $isim= $videorow->find("div[class=span-nine]")[0]->find("a")[$i]->innertext;
+            $source= $videorow->find("div[class=span-nine]")[0]->find("a")[$i]->href;
+            $bol=explode("?source=",$source);
+            $source=$bol[1];
+            array_push($playerary,array("isim"=>$isim,"source"=>$source));
+          }
+
+          $embedurl= $videorow->find("iframe")[0]->src;
+
+          return array("isim"=>$bolumisim,"playerler"=>$playerary,"embedurl"=>$embedurl);
+
+      }
+    }
+
+    function arama($isim,$sayfa=1){
+      $isim= urlencode($isim);
+
+      $bot= $this->curl("arsiv/?q=".$isim."&page=".$sayfa);
+
+      preg_match_all( '/<article class="tv-series-list-box">(.*?)<\/article>/', $bot, $diziler );
+
+      $veriler= array();
+      $diziary= array();
+      for ($i=0; $i <count($diziler[0]) ; $i++) {
+        $dizi= $this->dizilistegrid($diziler[0][$i]);
+        array_push($diziary,$dizi);
+      }
+      array_push($veriler,$diziary);
+
+
+        preg_match( '/<ul class="cd-pagination">(.*?)<\/ul>/', $bot, $pagenation );
+        if($pagenation[1]==null){
+          array_push($veriler,array("no pagination"));
+        }else{
+        preg_match( "/<li class='current'><b>(.*?)<\/b><\/li>/", $pagenation[1], $sayfa );
+        $sayfa= str_replace(array('[',']'),"",$sayfa[1]);
+        $bol= explode('/',$sayfa);
+        array_push($veriler,array("bulunan"=>$bol[0],"max"=>$bol[1]));
+        }
+
+        return $veriler;
+    }
 
 }

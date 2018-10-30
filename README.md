@@ -1,9 +1,10 @@
-# Yabancı Dizi Botu Php / Class
+# Yabancı Dizi Botu Php / Class V 2.0
 
 ---
 - [Kurulum](#kurulum)
 - [Bilgilendirme](#bilgilendirme)
 - [Ornekler](#ornekler)
+- [Ornek Site](#ornek-site)
 ---
 
 
@@ -16,21 +17,50 @@ Php üzerinde basit kurulum:
 
 ### Bilgilendirme
 
-Class 5.3, 5.4, 5.5, 5.6 sürümlerinde çalışmaktadır.
+Class 5.X sürümlerinde test edilmiştir.
+Class'ın işleyisini ve mantığını daha iyi anlamak için indirip hazırlamış olduğum örnek siteyinin kodlarını inceleyebilirsiniz.
+
+### Ornek Site
+#### Anasayfa
+![Örnek](https://i.hizliresim.com/nlzjoR.png)
+![Örnek](https://i.hizliresim.com/Q2DvGr.png)
+#### İzle
+![Örnek](https://i.hizliresim.com/vPkXlD.png)
+#### Dizi Sayfası
+![Örnek](https://i.hizliresim.com/yqYNDM.png)
 
 ### Ornekler
--Canlı Demo: [Demo](http://reguluscreative.com/projeler/yabanc%C4%B1-dizi-botu-php-class/)
 
--Daha fazla örnek için: [Örnekler](https://github.com/ErenKrt/yabanci-dizi-botu-php-class/tree/master/ornekler)
 
--Detaylı Örnekler: ornekler/index.html
 ```php
-require_once("class.php");
-$bot= new epbot();
+//Kurulum
+	require("class.php");
+	use eperen\yabancidizi;
+	$dizi = new yabancidizi();
+	
+//Popüler dizilerin listesini alma
+	$populerdiziler= $dizi->populer();
+	print_r($populerdiziler);
 
-$deneme= $bot->sonlar(5); // Son eklenenlerden almak istediğiniz miktar
+//Yeni eklenen altyazılı bölümleri alma
+	$yenieklenenler= $dizi->yeni(35,1);
+	print_r($yenieklenenler);
 
-for($i=0; $i<count($deneme); $i++){
-  echo "<a href='izle.php?isim=".$bot->seourl($deneme[$i][adi]." ".$deneme[$i][epadi])."' target='_blank'>".$deneme[$i][adi]."-".$deneme[$i][epadi]." | ".$deneme[$i][tarih]."<br><img src='resim.php?url=".$deneme[$i][resim]."' height='200' width='200'></a><hr>";
-}
+//Dizileri getirir . | tüm,anime,asya,yabancı | sayfa
+	$diziliste= $dizi->diziliste("tüm",1);
+	print_r($diziliste);
+
+//Diziye ait bilgileri, dizinin sayfasını getirir.
+	$dizisayfasi= $dizi->dizisayfa("elite");
+	print_R($dizisayfasi);
+
+//Bölüme ait playeri alma. | bölüm adı | tercih edilen player boş bırakılırsa otomatik seçer
+	$izle= $dizi->izle("the-flash-5-sezon-1-bolum","vidmolytr");
+	print_r($izle);
+
+//Dizi araması yapar
+	$arama= $dizi->arama("mr robot");
+	print_r($arama)
 ```
+Geliştirci: © ErenKrt
+İg: Ep.Eren
