@@ -62,8 +62,5 @@ Class'ın işleyisini ve mantığını daha iyi anlamak için indirip hazırlam�
 	$arama= $dizi->arama("mr robot");
 	print_r($arama)
 ```
-$$
-EpEren
-$$
 Geliştirci: © ErenKrt
 İg: Ep.Eren
