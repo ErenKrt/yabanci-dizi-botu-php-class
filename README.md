@@ -1,4 +1,5 @@
 # Yabancı Dizi Botu Php / Class V 2.0
+Yeni Sürüm: https://github.com/ErenKrt/yabanci-dizi-botu-dizibox-php
 
 ---
 - [Kurulum](#kurulum)
